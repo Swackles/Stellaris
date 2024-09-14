@@ -33,3 +33,6 @@
 
 # Output
 /build
+
+# IDE
+/.vscode

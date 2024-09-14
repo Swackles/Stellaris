@@ -8,6 +8,7 @@ using namespace std;
 string COMMENT_CHARACTER = "#";
 
 FileReader::FileReader(string fileName) {
+    filePath = fileName;
     infile.open(fileName);
 }
 
@@ -21,15 +22,32 @@ string FileReader::strip_string(string value) {
     return regex_replace(value, regex("^\\s+|(.*?)\\s+$"), "$1");
 }
 
+bool FileReader::read_block() {
+    read_line();
+
+    return key != StellarisKey::END_SECTION;
+}
+
+void FileReader::setKey(string keyString) {
+    if (keyString == "}") {
+        key = StellarisKey::END_SECTION;
+    } else if (keyString == "planet_event") {
+        key = StellarisKey::PLANET_EVENT;
+    } else {
+        cout << "\33[31m" << "ERROR: key \"" << keyString << "\" not found in \"" << filePath << ":" << fileLine << "\"" << "\033[0m" << endl;
+    }
+}
+
 bool FileReader::read_line() {
     bool eof;
 
     // Resets the key and value
-    key = "";
+    key = StellarisKey::EMPTY;
     value = "";
 
     if (buffered_line == "") {
         eof = getline(infile, line).eof();
+        fileLine += 1;
     } else {
         line = buffered_line;
         buffered_line = "";
@@ -44,9 +62,9 @@ bool FileReader::read_line() {
     } else {
         long seperator_pos = line.find("=");
 
-        key = strip_string(line.substr(0, seperator_pos));
+        setKey(strip_string(line.substr(0, seperator_pos)));
 
-        if (key != "}") {
+        if (key != StellarisKey::END_SECTION) {
             value = strip_string(line.substr(seperator_pos + 1, line.length()));
 
             // Handle multiple lines on same line
