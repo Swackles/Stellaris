@@ -1,6 +1,8 @@
+#ifndef FileReader_H
+#define FileReader_H
+
 #include <string>
 #include <fstream>
-#include "./StellarisKey.cpp"
 using namespace std;
 
 class FileReader {
@@ -8,7 +10,6 @@ class FileReader {
         ifstream infile;
         
         string filePath = "";
-        int fileLine = 0;
         string buffered_line = "";
 
         bool ignore_line();
@@ -17,12 +18,17 @@ class FileReader {
         void setKey(string keyString);
     
     public:
+        int fileLine = 0;
         string line;
-        StellarisKey key;
+        string key;
         string value;
+        bool endOfFileReached = false;
 
-        FileReader(string fileName);
+        // Each section start will increase it by one and every section decrease will reduce it
+        unsigned short int depth = 0;
+        FileReader(string file_name);
 
         bool read_line();
-        bool read_block();
+        bool read_block(unsigned short int startDepth);
 };
+#endif

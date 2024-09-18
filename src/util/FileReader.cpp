@@ -1,3 +1,4 @@
+#include <cstddef>
 #include <iostream>
 #include <regex>
 #include <string>
@@ -22,27 +23,32 @@ string FileReader::strip_string(string value) {
     return regex_replace(value, regex("^\\s+|(.*?)\\s+$"), "$1");
 }
 
-bool FileReader::read_block() {
-    read_line();
+bool FileReader::read_block(unsigned short int startDepth) {
+    if (depth == startDepth) {
+        read_line();
 
-    return key != StellarisKey::END_SECTION;
-}
-
-void FileReader::setKey(string keyString) {
-    if (keyString == "}") {
-        key = StellarisKey::END_SECTION;
-    } else if (keyString == "planet_event") {
-        key = StellarisKey::PLANET_EVENT;
+        return key != "}";
     } else {
-        cout << "\33[31m" << "ERROR: key \"" << keyString << "\" not found in \"" << filePath << ":" << fileLine << "\"" << "\033[0m" << endl;
+        unsigned int startLine = fileLine + 1;
+
+        while(depth > startDepth) {
+            bool eof = read_line();
+
+            if (!eof) return false;
+        }
+        read_line();
+
+        if (startLine != fileLine) {
+            cout << "\33[31m" << "Skipped lines in file: " << filePath << ":" << startLine << "-" << fileLine - 1 << "\033[0m" << endl;
+        }
+        return startDepth < depth || key != "}";
     }
 }
 
 bool FileReader::read_line() {
     bool eof;
 
-    // Resets the key and value
-    key = StellarisKey::EMPTY;
+    key = "";
     value = "";
 
     if (buffered_line == "") {
@@ -58,19 +64,20 @@ bool FileReader::read_line() {
     line = regex_replace(line, regex("(.*?)#.*$"), "$1");
 
     if (ignore_line()) {
+        if (eof) return !eof;
+        
         return read_line();
     } else {
-        long seperator_pos = line.find("=");
+        size_t seperator_pos = line.find("=");
 
-        setKey(strip_string(line.substr(0, seperator_pos)));
+        key = strip_string(line.substr(0, seperator_pos));
 
-        if (key != StellarisKey::END_SECTION) {
+        if (key != "}") {
             value = strip_string(line.substr(seperator_pos + 1, line.length()));
 
             // Handle multiple lines on same line
             // ex: country_event = { id = paragon.550 scopes = { from = event_target:dead_leader_clone } }
             if (value.length() == 1) {
-                return !eof;
             } else if (value.compare(0, 1, "{") == 0) {
                 buffered_line = value.substr(1, line.length());
                 value = strip_string(value.substr(0, 1));
@@ -78,6 +85,12 @@ bool FileReader::read_line() {
                 buffered_line = value.substr(value.length() - 1, 1);
                 value = strip_string(value.substr(0, value.length() - 1));
             }
+        }
+        
+        if (value == "{") {
+            depth = depth + 1;
+        } else if (key == "}") {
+            depth = depth - 1;
         }
     }
 

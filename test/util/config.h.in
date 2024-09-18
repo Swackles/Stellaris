@@ -1,0 +1,7 @@
+#pragma once 
+
+namespace test {
+
+    static constexpr auto file_path = "@TEST_FILE_PATH@";	
+
+};

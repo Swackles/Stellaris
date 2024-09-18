@@ -36,3 +36,6 @@
 
 # IDE
 /.vscode
+
+# Ignore auto generated files
+/test/util/config.h
