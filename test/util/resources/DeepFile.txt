@@ -1,9 +1,7 @@
 
 event = {
     event_1 = {
-        event_1_1 = {
-            event_1_1_key_1 = event_1_1_value_1
-        }
+        event_1_1 = { event_1_1_1 = { event_1_1_1_key = event_1_1_1_value } }
         event_1_2 = {
             event_1_2_key_1 = event_1_2_value_1
         }

@@ -24,6 +24,8 @@ string FileReader::strip_string(string value) {
 }
 
 bool FileReader::read_block(unsigned short int startDepth) {
+    bool eof = false;
+
     if (depth == startDepth) {
         read_line();
 
@@ -43,6 +45,16 @@ bool FileReader::read_block(unsigned short int startDepth) {
         }
         return startDepth < depth || key != "}";
     }
+}
+
+unsigned int count(string str, const char sub[2]) {
+    int count = 0;
+
+    for (int i = 0; i < str.size(); i++) {
+        if (str[i] == *sub) count++;
+    }
+
+    return count;
 }
 
 bool FileReader::read_line() {
@@ -71,10 +83,17 @@ bool FileReader::read_line() {
         size_t seperator_pos = line.find("=");
 
         key = strip_string(line.substr(0, seperator_pos));
+        value = strip_string(line.substr(seperator_pos + 1, line.length()));
 
-        if (key != "}") {
-            value = strip_string(line.substr(seperator_pos + 1, line.length()));
+        if (key.find("}") != string::npos) {
+            if (count(key, "}") > 1) {
+                buffered_line = value.substr(1, value.length());
+                key = "}";
+            }
 
+            value = "";
+            depth = depth - 1;
+        } else {
             // Handle multiple lines on same line
             // ex: country_event = { id = paragon.550 scopes = { from = event_target:dead_leader_clone } }
             if (value.length() == 1) {
@@ -82,15 +101,13 @@ bool FileReader::read_line() {
                 buffered_line = value.substr(1, line.length());
                 value = strip_string(value.substr(0, 1));
             } else if (value.substr(value.length() - 1, 1) == "}") {
-                buffered_line = value.substr(value.length() - 1, 1);
-                value = strip_string(value.substr(0, value.length() - 1));
+                auto posOfBlockEnd = value.find_first_of("}");
+
+                buffered_line = value.substr(posOfBlockEnd, value.length());
+                value = strip_string(value.substr(0, posOfBlockEnd));
             }
-        }
-        
-        if (value == "{") {
-            depth = depth + 1;
-        } else if (key == "}") {
-            depth = depth - 1;
+
+            if (value == "{") depth = depth + 1;
         }
     }
 
