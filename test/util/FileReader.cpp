@@ -5,7 +5,8 @@
 using namespace std;
 
 string getFile(string fileName) {
-    return test::file_path + fileName;
+    string basePath = test::file_path;
+    return basePath + "/util/resources/" + fileName;
 }
 
 TEST_CASE("FileReader::read_block") {

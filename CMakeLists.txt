@@ -34,8 +34,8 @@ set (test_assets
     test/util/assets/BasicFile.txt
 )
 
-get_filename_component(TEST_FILE_PATH ./test/util/resources ABSOLUTE)
-configure_file(./test/util/config.h.in ../test/util/config.h)
+get_filename_component(TEST_FILE_PATH ./test ABSOLUTE)
+configure_file(./test/config.h.in ../test/config.h)
 
 add_executable(unit_tests
     test/util/FileReader.cpp
