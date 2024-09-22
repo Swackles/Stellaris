@@ -1,5 +1,6 @@
-cmake_minimum_required(VERSION 3.5.0)
+cmake_minimum_required(VERSION 3.10.0)
 project(StellarisEventsParser VERSION 0.0.1 LANGUAGES C CXX)
+set(CMAKE_CXX_STANDARD 17)
 
 enable_testing()
 
@@ -51,6 +52,22 @@ target_link_libraries(sectionResearchTests
 )
 
 #
+# src/shared tests
+#
+add_library(
+    sharedTests
+    test/shared/ScriptedVariables.cpp
+)
+
+target_include_directories(sharedTests PUBLIC test/)
+
+target_link_libraries(sharedTests
+    PRIVATE
+    shared
+        Catch2::Catch2
+)
+
+#
 # src/util tests
 #
 add_library(
@@ -76,6 +93,7 @@ target_include_directories(allTests PUBLIC test/)
 target_link_libraries(allTests
     PRIVATE
         sectionResearchTests
+        sharedTests
         utilTests
 
         Catch2::Catch2WithMain

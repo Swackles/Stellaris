@@ -4,6 +4,11 @@ namespace test {
 
     static constexpr auto file_path = "@TEST_FILE_PATH@";
 
+    static std::string getStellarisPath() {
+        string basePath = test::file_path;
+        return basePath + "/resources";
+    }
+
     static std::string getUtilFile(std::string fileName) {
         string basePath = test::file_path;
         return basePath + "/util/resources/" + fileName;
