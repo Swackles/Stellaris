@@ -1,5 +1,9 @@
 add_library(
     sectionResearch
+
+    ResearchCategory.cpp
+    ResearchCategory.h
+
     ResearchTier.cpp
     ResearchTier.h
 )

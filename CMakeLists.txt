@@ -38,6 +38,7 @@ configure_file(./test/config.h.in ../test/config.h)
 #
 add_library(
     sectionResearchTests
+    test/section/research/ResearchCategory.cpp
     test/section/research/ResearchTier.cpp
 )
 
