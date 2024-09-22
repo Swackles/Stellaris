@@ -4,14 +4,9 @@
 #include <fstream>
 using namespace std;
 
-string getFile(string fileName) {
-    string basePath = test::file_path;
-    return basePath + "/util/resources/" + fileName;
-}
-
 TEST_CASE("FileReader::read_block") {
     SECTION("Reads basic until end") {
-        FileReader fileReader = FileReader(getFile("/BasicFile.txt"));
+        FileReader fileReader = FileReader(test::getUtilFile("/BasicFile.txt"));
 
         while(fileReader.read_block(0)) {
         };
@@ -20,7 +15,7 @@ TEST_CASE("FileReader::read_block") {
     }
     
     SECTION("Reads deep blocks and ignores the depth") {
-        FileReader fileReader = FileReader(getFile("/DeepFile.txt"));
+        FileReader fileReader = FileReader(test::getUtilFile("/DeepFile.txt"));
 
         int blocksReturned = 0;
         fileReader.read_line();
@@ -38,7 +33,7 @@ TEST_CASE("FileReader::read_block") {
 TEST_CASE("FileReader::read_line") {
     SECTION("Reads file until end") {
         string filePath = test::file_path;
-        FileReader fileReader = FileReader(getFile("/BasicFile.txt"));
+        FileReader fileReader = FileReader(test::getUtilFile("/BasicFile.txt"));
 
         while(fileReader.read_line()) {  };
 
@@ -48,7 +43,7 @@ TEST_CASE("FileReader::read_line") {
     SECTION("Run over ignored lines") {
         string filePath = test::file_path;
         int linesReturned = 0;
-        FileReader fileReader = FileReader(getFile("/IgnoredLines.txt"));
+        FileReader fileReader = FileReader(test::getUtilFile("/IgnoredLines.txt"));
 
         string lineThreeText[6];
         while(fileReader.read_line()) {

@@ -2,6 +2,15 @@
 
 namespace test {
 
-    static constexpr auto file_path = "@TEST_FILE_PATH@";	
+    static constexpr auto file_path = "@TEST_FILE_PATH@";
 
+    static std::string getUtilFile(std::string fileName) {
+        string basePath = test::file_path;
+        return basePath + "/util/resources/" + fileName;
+    }
+
+    static std::string getSectionResearchFile(std::string fileName) {
+        string basePath = test::file_path;
+        return basePath + "/section/research/resources/" + fileName;
+    }
 };

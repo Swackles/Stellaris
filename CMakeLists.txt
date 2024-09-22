@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.5.0)
 project(StellarisEventsParser VERSION 0.0.1 LANGUAGES C CXX)
 
-include(CTest)
 enable_testing()
 
 add_subdirectory(src)
@@ -12,7 +11,9 @@ target_link_libraries(StellarisEventsParser PRIVATE util)
 
 set_property(TARGET StellarisEventsParser PROPERTY CXX_STANDARD 17)
 
+#
 # Catch2 test
+#
 Include(FetchContent)
 
 add_library(Catch INTERFACE)
@@ -29,22 +30,56 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(Catch2)
 
-# Copy assets for FileReader tests
-set (test_assets
-    test/util/assets/BasicFile.txt
-)
-
 get_filename_component(TEST_FILE_PATH ./test ABSOLUTE)
 configure_file(./test/config.h.in ../test/config.h)
 
-add_executable(unit_tests
+#
+# src/section/research tests
+#
+add_library(
+    sectionResearchTests
+    test/section/research/ResearchTier.cpp
+)
+
+target_include_directories(sectionResearchTests PUBLIC test/)
+
+target_link_libraries(sectionResearchTests
+    PRIVATE
+    sectionResearch
+        Catch2::Catch2
+)
+
+#
+# src/util tests
+#
+add_library(
+    utilTests
     test/util/FileReader.cpp
 )
 
-target_include_directories(unit_tests PUBLIC test/)
+target_include_directories(utilTests PUBLIC test/)
 
-target_link_libraries(unit_tests
+target_link_libraries(utilTests
     PRIVATE
         util
+        Catch2::Catch2
+)
+
+#
+# all tests
+#
+add_executable(allTests test/test.cpp)
+
+target_include_directories(allTests PUBLIC test/)
+
+target_link_libraries(allTests
+    PRIVATE
+        sectionResearchTests
+        utilTests
+
         Catch2::Catch2WithMain
 )
+
+include(CTest)
+include(Catch)
+catch_discover_tests(allTests)
