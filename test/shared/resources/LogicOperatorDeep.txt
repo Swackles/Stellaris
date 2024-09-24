@@ -1,0 +1,13 @@
+OR = {
+    NOT = {
+        has_technology = tech_mine_exotic_gases
+    }
+    NOT = {
+        has_technology = tech_exotic_gases
+    }
+    NOT = {
+        has_country_flag = has_market_access
+    }
+
+    has_country_flag = has_market_access
+}

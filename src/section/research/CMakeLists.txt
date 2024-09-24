@@ -4,8 +4,15 @@ add_library(
     ResearchCategory.cpp
     ResearchCategory.h
 
+    ResearchItem.cpp
+    ResearchItem.h
+
     ResearchTier.cpp
     ResearchTier.h
 )
 
-target_include_directories(sectionResearch PRIVATE util)
+target_include_directories(sectionResearch
+    PRIVATE
+        util
+        shared
+)

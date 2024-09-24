@@ -8,6 +8,11 @@ namespace test {
         string basePath = test::file_path;
         return basePath + "/resources";
     }
+    
+    static std::string getSharedFile(std::string fileName) {
+        string basePath = test::file_path;
+        return basePath + "/shared/resources/" + fileName;
+    }
 
     static std::string getUtilFile(std::string fileName) {
         string basePath = test::file_path;
